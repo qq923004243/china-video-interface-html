@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>lxl解析</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="custom-elements-builtin.min.js"></script>
+    <script type="module" src="x-frame-bypass.js"></script>
+    <!-- 请勿在项目正式环境中引用该 layui.css 地址 1-->
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .list {
+            margin-bottom: 10px;
+        }
+        .input {
+            margin-bottom: 10px;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .iframe-container {
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            right: 0;
+            background-color: #fff;
+            z-index: 9999;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .iframe-container.active {
+            transform: translateX(0);
+        }
+        .iframe-container.hidden {
+            display: none;
+            visibility: hidden;
+        }
+        .iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                height: auto;
+            }
+            .form {
+                margin: 20px;
+            }
+            .iframe-container {
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                top: 0;
+                right: 0;
+                background-color: #fff;
+                z-index: 9999;
+                transform: translateX(0);
+                transition: transform 0.3s ease-in-out;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="form">
+        <label for="list">解析接口</label>
+        <select class="list" id="list">
+            <option value="https://jx.xmflv.com/?url=">虾米</option>
+            <option value="https://www.8090g.cn/?url=">8090g</option>
+            <option value="https://www.playm3u8.cn/jiexi.php?url=">playm3u8</option>
+            <option value="https://jx.m3u8.tv/jiexi/?url=">m3u8</option>
+            <option value="https://www.ckplayer.vip/jiexi/?url=">ckplay</option>
+            <option value="https://bd.jx.cn/?url=">bdjx</option>
+            <option value="https://www.yemu.xyz/?url=">夜幕</option>
+        </select>
+        <label for="input">解析地址</label>
+        <input type="text" class="input" id="input">
+        <button class="button" onclick="generateURL()">确定</button>
+    </div>
+</div>
+<div class="iframe-container" id="iframeContainer">
+    <button class="close-button" onclick="hideIframe()">关闭</button>
+    <iframe  is="x-frame-bypass"  class="iframe" id="iframe" sandbox="allow-forms allow-pointer-lock allow-same-origin allow-scripts allow-top-navigation" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen allowtransparency></iframe>
+    </div>
+<script>
+    function generateURL() {
+        var listValue = document.getElementById("list").value;
+        var inputValue = document.getElementById("input").value;
+        var url = listValue + inputValue;
+        document.getElementById("iframeContainer").classList.remove("hidden");
+        document.getElementById("iframe").src = url;
+        document.getElementById("iframeContainer").classList.add("active");
+    }
+    function hideIframe() {
+        document.getElementById("iframeContainer").classList.remove("active");
+        document.getElementById("iframe").src = 'https://www.baidu.com';
+        document.getElementById("iframeContainer").classList.add("hidden");
+    }
+    window.addEventListener('message', function(event) {
+        if (event.data === 'maximize') {
+            document.getElementById('iframe').style.width = '100%';
+            document.getElementById('iframe').style.height = '100%';
+        }
+    });
+    window.parent.postMessage('maximize', '*');
+    window.addEventListener('DOMContentLoaded', function() {
+        document.getElementById("iframeContainer").classList.add("hidden");
+    });
+
+
+</script>
+</body>
+</html>
